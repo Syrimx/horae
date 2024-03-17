@@ -55,7 +55,9 @@ void logicalToHardware(int mode) {
 	if(mode == 0) {
 		for(int i = 0; i < 6; i++) {
 			if(minArray[i] == 1) {
+				_delay_ms(20);
 				PORTC |= (1<<i);
+				_delay_us(120);
 			}
 			else if(minArray[i] == 0) {
 				PORTC &= ~(1<<i);
@@ -67,7 +69,9 @@ void logicalToHardware(int mode) {
 	else if(mode == 1) {
 		for(int i = 0; i < 5; i++) {
 			if(minArray[i] == 1) {
+				_delay_ms(20);
 				PORTD |= (1<<(i+3));
+				_delay_us(120);
 			}
 			else if(minArray[i] == 0) {
 				PORTD &= ~(1<<(i+3));
@@ -79,24 +83,28 @@ void logicalToHardware(int mode) {
 
 
 void main() {
-	DDRC=0xff;
-	DDRD=0xff;
+	DDRC= 0b00111111;
+	DDRD= 0b11111000;
 
+	//setting the button ports
+	PORTD=0b00000111;
+
+	//Testing Counting up the Hours
+	for(int i = 0; i < 24; i++) {
+		computeTimeLogic(i);
+		logicalToHardware(1);
+		//Testing counting to 60 (Minutes)
+		for(int j = 1; j <= 60; j++) {
+			computeTimeLogic(j);
+			logicalToHardware(0);
+		}
+	}
 
 	while(1) {
-		//Testing Counting up the Hours
-		for(int i = 0; i < 24; i++) {
-			computeTimeLogic(i);
-			logicalToHardware(1);
-			//Testing counting to 60 (Minutes)
-			for(int j = 1; j <= 60; j++) {
-				computeTimeLogic(j);
-				logicalToHardware(0);
-			}
-		}
 
 
-		//Testing Counting up the Hours
+
+		//Testing the Functionality of the LEDs
 		PORTD |= (1<<3);
 	}
 }
